@@ -1,23 +1,20 @@
-# Telegram Bot Template
+# QuienVienebot
 
-This is a template to make a Telegram bot on Python 3, it starts a few basic commands. It is intended for own usage, but you can use it 
-if you want.
+Bot de Telegram para contar las personas que van a ir a un evento/quedada.
 
-## Usage
+## Cómo usarlo
 
-You can find real examples of this project layout on other repositories of mine, but here are the basics:
+Puedes usar el bot en [@QuienVienebot](t.me/quienvienebot), o si lo prefieres, puedes correrlo tú mismo siguiendo los
+siguiente pasos:
 
-* Install all requirements.txt
 
-* To run the bot you must put the bot token given by [@botfather](t.me/botfather) on the bot_tokens.py file. If you want
-  to use payments put there the payment provider token as well. With this done, the bot will run with the basic commands.
+* Instala requirements.txt
 
-* Personalize the messages in the langs/ directory. If you want to add more languages or change the default you will
-  have to do it on lang.py
+* Usa [@botfather](t.me/botfather) para conseguir un token de bot de telegram y ponlo en bot_tokens.py file.
 
-* To add more commands or change how the behave declare/modify functions in handlers.py
+* Corre el bot con `python bot.py`. Asegurate de que estás usando python3.
 
-* If you add more commands or need to get different Telegram Updates link the functions on handlers.py to the dispatcher
-  on bot.py
+# Contribuir
 
-* If you want to create a database with sqlite, create it an use the database.py singleton to access it from any file.
+Si tienes algo que aportar puedes hacer un PR con tus modificaciones en cualquier momento. Si encuentras algún bug o
+tienes alguna sugerencia abre una issue.
