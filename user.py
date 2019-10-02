@@ -24,7 +24,7 @@ class User:
         self.expiration_date = kwargs.get("expiration_date", time() + DEFAULT_EXPIRE_TIME)
 
         # Check types
-        if not isinstance(self.first_name, str) and isinstance(id, int):
+        if not (isinstance(self.first_name, str) and isinstance(self.id, int)):
             raise TypeError
 
         if self.full_name is None:
