@@ -1,5 +1,5 @@
 {
-  "lang_ver": "v0.1.0",
+  "lang_ver": "v0.2.0",
   "not_found": "ERROR: text not found. Please use /support <message> explaining what happened.",
   "start": "Hi! Welcome!",
   "help": "Available commands are: /start /help /more /donate /about /support",
@@ -12,5 +12,23 @@
   "donation_title": "Donation",
   "donation_description": "Thank you for supporting this project. Use the button pay to send the money.",
   "donations_not_available": "In this moment the donations are not available. You can contact the administrator with /support <message>",
-  "donation_completed": "Thank you for your donation ❤️"
+  "donation_completed": "Thank you for your donation ❤️",
+  "vote_yes_message_line": "*Coming:*",
+  "vote_yes_keyboard": "I'm coming",
+  "vote_dk_message_line": "*Maybe coming:*",
+  "vote_dk_keyboard": "Maybe",
+  "vote_not_message_line": "*Not coming:*",
+  "vote_not_keyboard": "I'm not coming",
+  "close_list": "✋ STOP",
+  "forward_list": "Forward",
+  "send_existent": "Press to send an already existent list",
+  "no_existent_meeting_query_title": "You don't have any meetings",
+  "no_existent_meeting_query_description": "keep writing to create a new one",
+  "no_existent_meeting_message": "*You haven't created any meetings*\nTo create a new one, write in any chat _@{bot_username} Who's coming to...?_",
+  "donations_accepted": "We accept donations ❤️",
+  "send_existent_meeting_query_description": "press to send this already existent list",
+  "list_not_found_message": "I couldn't find the list you were looking for\nIt may have been closed or have expired, create a new one.",
+  "list_not_found_query_title": "Couldn't find any list with that ID",
+  "list_not_found_query_description": "It may have been closed or have expired, create a new one.",
+  "warning_list_does_not_exist": "⚠️ That list does not exist"
 }

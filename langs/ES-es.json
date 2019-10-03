@@ -1,5 +1,5 @@
 {
-  "lang_ver": "v0.1.0",
+  "lang_ver": "v0.2.0",
   "not_found": "ERROR: texto no encontrado. Por favor usa /support <mensaje> describiendo cómo ha ocurrido.",
   "start": "Hola! Bienvenido!",
   "help": "Este es el mensaje de ayuda.",
@@ -12,5 +12,23 @@
   "donation_title": "Donación",
   "donation_description": "Gracias por aportar a este proyecto. Usa el botón pagar para proceder al pago.",
   "donations_not_available": "En este momento las donaciones no están disponibles. Puedes contactar con el desarrolador con /support",
-  "donation_completed": "Muchas gracias por donar "
+  "donation_completed": "Muchas gracias por donar ",
+  "vote_yes_message_line": "*Dicen que vienen:*",
+  "vote_yes_keyboard": "Yo voy",
+  "vote_dk_message_line": "*Dicen que puede que vengan:*",
+  "vote_dk_keyboard": "Puede",
+  "vote_not_message_line": "*Dicen que no vienen:*",
+  "vote_not_keyboard": "Yo no voy",
+  "close_list": "✋ CERRAR",
+  "forward_list": "Reenviar",
+  "send_existent": "Pulsa para enviar esta cita ya creada",
+  "no_existent_meeting_query_title": "No tienes ning una cita creada",
+  "no_existent_meeting_query_description": "sigue escribiendo para crear una",
+  "no_existent_meeting_message": "*No tienes ninguna cita creada*\nPara crear una cita escribe en cualquier chat _@{bot_username} ¿Quién viene a...?_",
+  "donations_accepted": "Se aceptan donaciones ❤️",
+  "send_existent_meeting_query_description": "pulsa para enviar esta lista ya creada",
+  "list_not_found_message": "No he podido encontrar la lista que buscabas\nPuede que haya sido cerrada o haya caducado, crea una nueva.",
+  "list_not_found_query_title": "No existe ninguna cita con esa ID",
+  "list_not_found_query_description": "puede que haya sido cerrada o haya caducado, crea una nueva.",
+  "warning_list_does_not_exist": "⚠️ Parece que esa lista no existe"
 }

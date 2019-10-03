@@ -13,6 +13,8 @@ MIN_EXPIRE_TIME = 7884000  # Three months in seconds
 
 class List:
 
+    vote_options = ["yes", "dk", "not"]
+
     def __init__(self, **kwargs):
 
         self.id = kwargs.get("id", str(uuid4()))
