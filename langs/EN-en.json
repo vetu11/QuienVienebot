@@ -1,5 +1,5 @@
 {
-  "lang_ver": "v0.3.0",
+  "lang_ver": "v0.3.1",
   "not_found": "ERROR: text not found. Please use /support <message> explaining what happened.",
   "start": "Hi! Welcome!",
   "help": "Available commands are: /start /help /more /donate /about /support",
@@ -31,5 +31,5 @@
   "list_not_found_query_title": "Couldn't find any list with that ID",
   "list_not_found_query_description": "It may have been closed or have expired, create a new one.",
   "warning_list_does_not_exist": "⚠️ That list does not exist",
-  "press_to_send": "Pulsa para enviar"
+  "press_to_send": "Press to send"
 }
