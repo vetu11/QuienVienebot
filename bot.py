@@ -46,8 +46,8 @@ def main():
     h(MessageHandler(filters=Filters.successful_payment, callback=handlers.completed_donation))
     h(PreCheckoutQueryHandler(handlers.approve_transaction))
 
-    h(InlineQueryHandler(handlers.empty_query, pattern=r"$"))
-    h(InlineQueryHandler(handlers.full_query))
+    h(InlineQueryHandler(handlers.full_query, pattern=".+"))
+    h(InlineQueryHandler(handlers.empty_query))
     h(ChosenInlineResultHandler(handlers.chosen_result))
     h(CallbackQueryHandler(handlers.cast_vote, pattern=r"vote\*.*\*"))
 

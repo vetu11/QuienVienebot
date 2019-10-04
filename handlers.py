@@ -3,6 +3,7 @@ Here should be declared all functions that handle the supported Telegram API cal
 """
 
 import const
+from time import time
 from uuid import uuid4
 from bot_tokens import PAYMENT_PROVIDER_TOKEN
 from list_manager import list_manager
@@ -21,13 +22,17 @@ def _create_list_message(list, lang) -> str:
 
     for vote_option in list.vote_options:
         sql = "SELECT full_name FROM users WHERE id IN " \
-              "(SELECT user_id FROM user_votes WHERE list_id=? AND vote=? ORDER BY vote_timestamp LIMIT ?)"
-        cur = conn.conn.execute(sql, [list.id, vote_option, const.NAMES_PER_VOTE_TYPE])
+              "(SELECT user_id FROM user_votes WHERE list_id=? AND vote=? ORDER BY vote_timestamp DESC LIMIT ?)"
+        cur = conn.execute(sql, [list.id, vote_option, const.NAMES_PER_VOTE_TYPE])
+        names = cur.fetchall()
 
+        if not names:
+            continue
         text += "\n\n" + lang.get_text("vote_%s_message_line" % vote_option)
 
-        for name in cur.fetchall():
-            text += "\n" + name
+        for name in names:
+            text += "\n" + name[0]
+    conn.close()
 
     return text
 
@@ -39,29 +44,30 @@ def _create_list_keyboard(list, lang, uuid=None) -> list:
     
     # In some cases, we haven't created the list yet, so we need to use an id to a to be created list.
     if uuid:
-        list_id = uuid
+        list_id = str(uuid)
     else:
         list_id = list.id
 
     for vote_option in list.vote_options:
-        cur = conn.conn.execute("SELECT count(*) FROM user_votes WHERE list_id=? AND vote=?", [list_id, vote_option])
-        option_votes.append((vote_option, cur.fetchone()))
+        cur = conn.execute("SELECT count(*) FROM user_votes WHERE list_id=? AND vote=?", [list_id, vote_option])
+        option_votes.append((cur.fetchone(), vote_option))
 
-        keyboard[0].append(InlineKeyboardButton(lang.get_text("vote_%s_keyboard" % vote_option,
-                                                              callback_data="vote*%s*%s" % (vote_option, list_id))))
+        keyboard[0].append(InlineKeyboardButton(lang.get_text("vote_%s_keyboard" % vote_option),
+                                                callback_data="vote*%s*%s" % (vote_option, list_id)))
 
-    if max(option_votes) > const.NAMES_PER_VOTE_TYPE:
+    if max(option_votes)[0][0] > const.NAMES_PER_VOTE_TYPE:
         new_row = []
 
         link = "t.me/%s?start=%s" % (const.aux.BOT_USERNAME, list_id)
 
         for votes in option_votes:
-            new_row.append(InlineKeyboardButton("(%s)" % votes[1], url=link + "_%s" % votes[0]))
+            new_row.append(InlineKeyboardButton("(%s)" % votes[0][0], url=link + "_%s" % votes[1]))
 
         keyboard.append(new_row)
 
     new_row = [InlineKeyboardButton(lang.get_text("forward_list"), switch_inline_query="id*%s" % list_id)]
     keyboard.append(new_row)
+    conn.close()
 
     return keyboard
 
@@ -300,27 +306,36 @@ def chosen_result(bot, update):
 def cast_vote(bot, update):
     user = user_manager.get_user(update.effective_user)
     lang = get_lang(user.language_code)
-    vote, list_id = update.callback_query.data.split("*")[1:2]
+    vote, list_id = update.callback_query.data.split("*")[1:3]
     list = list_manager.get_list_by_id(list_id)
 
     if list:
         conn = database.get_connection()
 
         # Check if the user has voted before this list
-        cur = conn.conn.execute("SELECT * FROM user_votes WHERE user_id=? AND list_id=?", [user.id, list.id])
-        if cur.fetchone():
-            conn.conn.execute("UPDATE user_votes SET vote=? WHERE user_id=? AND list_id=?", [vote, user.id, list.id])
-        else:
-            conn.conn.execute("INSERT INTO user_votes VALUES (?, ?, ?)", [user.id, list.id, vote])
+        cur = conn.execute("SELECT vote FROM user_votes WHERE user_id=? AND list_id=?", [user.id, list.id])
+        past_vote = cur.fetchone()
+        if past_vote:
+            # If it is a new vote type, we change the vote type.
+            if past_vote[0] != vote:
+                conn.execute("UPDATE user_votes SET vote=?, vote_timestamp=? WHERE user_id=? AND list_id=?",
+                                  [vote, time(), user.id, list.id])
+            # If it is the same, we remove the vote
+            else:
+                conn.execute("DELETE FROM user_votes WHERE user_id=? AND list_id=?", [user.id, list.id])
 
-        conn.conn.commit()
+        else:
+            conn.execute("INSERT INTO user_votes VALUES (?, ?, ?, ?)", [user.id, list.id, vote, time()])
+
+        conn.commit()
+        conn.close()
 
         message, keyboard = _create_list_message(list, lang), _create_list_keyboard(list, lang)
 
         bot.edit_message_text(text=message,
                               parse_mode=ParseMode.MARKDOWN,
                               disable_web_page_preview=True,
-                              reply_markup=keyboard,
+                              reply_markup=InlineKeyboardMarkup(keyboard),
                               inline_message_id=update.callback_query.inline_message_id)
         update.callback_query.answer("okay 👍")
     else:

@@ -55,25 +55,28 @@ class User:
 
     def save(self):
         conn = database.get_connection()
-        exists = conn.conn.execute("SELECT * FROM users WHERE id=?", self.id).fetchone()
+        exists = conn.execute("SELECT * FROM users WHERE id=?", [self.id]).fetchone()
 
         if exists:
             # Parse the values
-            keys = list(self.__dict__.keys())
+            sql = """UPDATE users
+            SET 'id'=?,
+                'first_name'=?,
+                'last_name'=?,
+                'username'=?,
+                'full_name'=?,
+                'full_name_simple'=?,
+                'language_code'=?,
+                'expiration_date'=?
+            WHERE 'id'=?
+            """
             values = list(self.__dict__.values())
-            set = "%s=%s" % (keys[0], values[0])
-            for i in range(1, len(keys)):
-                set += ", %s=%s" % (keys[i], values[i])
-
-            conn.conn.execute("UPDATE users SET ? WHERE id=?", set, self.id)
+            values.append(self.id)
+            conn.execute(sql, values)
         else:
             # Parse the key and values
             d = self.__dict__
-            keys = str(list(d.keys())[0])
-            for k in list(d.keys())[1:]:
-                keys += ", %s" % k
-            values = str(list(d.values())[0])
-            for v in list(d.values())[1:]:
-                values += ", %s" % v
 
-            conn.conn.execute("INSERT INTO users (?) VALUES (?)", str(d.keys()), d.values())
+            conn.execute("INSERT INTO users VALUES (?,?,?,?,?,?,?,?)", list(d.values()))
+        conn.commit()
+        conn.close()

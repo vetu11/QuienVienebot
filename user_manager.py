@@ -36,8 +36,10 @@ class _UserManager:
             return self.active_sessions[telegram_user.id]
 
         # If the user isn't active, get it from the database
-        user_dict = database.get_one_fetched_as_dict(database.execute_and_commit("SELECT FROM users WHERE id=?",
-                                                                                 telegram_user.id))
+        conn = database.get_connection()
+        user_dict = database.get_one_fetched_as_dict(conn.execute("SELECT * FROM users WHERE id=?",
+                                                                     [telegram_user.id]))
+        conn.close()
         if user_dict:
             new_session = User(**user_dict)
             self.active_sessions[new_session.id] = new_session
@@ -59,8 +61,9 @@ class _UserManager:
             return self.active_sessions[user_id]
 
         # Get the user from the database
-        user_dict = database.get_one_fetched_as_dict(database.execute_and_commit("SELECT FROM users WHERE id=?",
-                                                                                 user_id))
+        conn = database.get_connection()
+        user_dict = database.get_one_fetched_as_dict(conn.execute("SELECT FROM users WHERE id=?",
+        conn.close()                                                                   [user_id]))
 
         if user_dict:
             new_session = User(**user_dict)
@@ -77,10 +80,11 @@ class _UserManager:
 
         conn = database.get_connection()
         t = time()
-        conn.conn.execute("DELETE FROM user_votes WHERE user_id IN (SELECT id FROM users WHERE expiration_date >= ?)",
-                          t)
-        conn.conn.execute("DELETE FROM users WHERE expiration_date >= ?", t)
-        conn.conn.commit()
+        conn.execute("DELETE FROM user_votes WHERE user_id IN (SELECT id FROM users WHERE expiration_date <= ?)",
+                          [t])
+        conn.execute("DELETE FROM users WHERE expiration_date <= ?", [t])
+        conn.commit()
+        conn.close()
 
 
 user_manager = _UserManager()

@@ -1,5 +1,5 @@
 {
-  "lang_ver": "v0.2.0",
+  "lang_ver": "v0.3.0",
   "not_found": "ERROR: texto no encontrado. Por favor usa /support <mensaje> describiendo cómo ha ocurrido.",
   "start": "Hola! Bienvenido!",
   "help": "Este es el mensaje de ayuda.",
@@ -30,5 +30,6 @@
   "list_not_found_message": "No he podido encontrar la lista que buscabas\nPuede que haya sido cerrada o haya caducado, crea una nueva.",
   "list_not_found_query_title": "No existe ninguna cita con esa ID",
   "list_not_found_query_description": "puede que haya sido cerrada o haya caducado, crea una nueva.",
-  "warning_list_does_not_exist": "⚠️ Parece que esa lista no existe"
+  "warning_list_does_not_exist": "⚠️ Parece que esa lista no existe",
+  "press_to_send": "Pulsa para enviar"
 }

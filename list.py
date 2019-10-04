@@ -21,6 +21,7 @@ class List:
         self.from_user_id = int(kwargs.get("from_user_id"))
         self.title = kwargs.get("title")
         self.expiration_date = kwargs.get("expiration_date", time() + DEFAULT_EXPIRE_TIME)
+        self.save()
 
     def refresh_expiration_date(self):
         self.expiration_date += EXPIRE_TIME_REFRESH_RATE
@@ -31,17 +32,20 @@ class List:
 
     def save(self):
         conn = database.get_connection()
-        exists = conn.conn.execute("SELECT * FROM lists WHERE id=?", self.id).fetchone()
+        exists = conn.execute("SELECT * FROM lists WHERE id=?", [self.id]).fetchone()
 
         if exists:
-            # Parse the values
-            keys = list(self.__dict__.keys())
+            sql = """
+            UPDATE lists
+            SET 'id'=?,
+                'from_user_id'=?,
+                'title'=?,
+                'expiration_date'=?
+            WHERE 'id'=?
+            """
             values = list(self.__dict__.values())
-            set = "%s=%s" % (keys[0], values[0])
-            for i in range(1, len(keys)):
-                set += ", %s=%s" % (keys[i], values[i])
-
-            conn.conn.execute("UPDATE lists SET ? WHERE id=?", set, self.id)
+            values.append(self.id)
+            conn.execute(sql, values)
         else:
             # Parse the key and values
             d = self.__dict__
@@ -52,4 +56,6 @@ class List:
             for v in list(d.values())[1:]:
                 values += ", %s" % v
 
-            conn.conn.execute("INSERT INTO lists (?) VALUES (?)", str(d.keys()), d.values())
+            conn.execute("INSERT INTO lists VALUES (?,?,?,?)", list(d.values()))
+        conn.commit()
+        conn.close()
