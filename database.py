@@ -9,9 +9,6 @@ DATABASE_PATH = "database.db"
 
 class _Database:
 
-    def __init__(self):
-        pass
-
     @staticmethod
     def get_connection():
         return sqlite3.connect(DATABASE_PATH)
