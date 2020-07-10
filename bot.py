@@ -32,7 +32,7 @@ def main():
     const.aux.BOT_USERNAME = updater.bot.get_me().username
 
     # Assigning handlers
-    h(CommandHandler("start", handlers.start))
+    h(CommandHandler("start", handlers.start, pass_args=True))
     h(CommandHandler("help", handlers.help))
     h(CommandHandler("more", handlers.more))
     h(CommandHandler("ping", handlers.ping))
@@ -50,6 +50,7 @@ def main():
     h(InlineQueryHandler(handlers.empty_query))
     h(ChosenInlineResultHandler(handlers.chosen_result))
     h(CallbackQueryHandler(handlers.cast_vote, pattern=r"vote\*.*\*"))
+    h(CallbackQueryHandler(handlers.get_clist, pattern=r"get_clist\*.*\*"))
 
     updater.dispatcher.add_error_handler(handlers.error)
 

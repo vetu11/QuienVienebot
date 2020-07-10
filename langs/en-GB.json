@@ -1,9 +1,9 @@
 {
-  "lang_ver": "v0.3.1",
+  "lang_ver": "v0.4.0",
   "not_found": "ERROR: text not found. Please use /support <message> explaining what happened.",
-  "start": "Hi! Welcome!",
-  "help": "Available commands are: /start /help /more /donate /about /support",
-  "more": "I've done more bots!\n@xPlitterbot helps you with your travel expenses, add it to your group and it will split everything and tell you how to solve the debts.\n\nSpanish onli:\n@Pilocobot es un juego picante para beber con tus amigos, o para conocer mejor a los nuevos en la fiesta\n\n@QuienVienebot para contar facilmente los asistentes a un evento / queada.\n\n@SinSentidobot, que genera mensajes que parece que dicen algo pero la verdad que no.",
+  "start": "Hi! I'm {bot_username}. I can help you to ask who is coming to an event. Write @{bot_username} in any chat and then a title for the poll.",
+  "help": "You can create a poll by writin @{bot_username} in any chat, followed by a title.\n\nYou can see the people that doesn't fit in the list by pressing the buttons with the number of people within brackets.",
+  "more": "I've made more bots!\n@xPlitterbot helps you with your travel expenses, add it to your group and it will split everything and tell you how to solve the debts.\n\nSpanish onli:\n@Pilocobot es un juego picante para beber con tus amigos, o para conocer mejor a los nuevos en la fiesta\n\n@QuienVienebot para contar facilmente los asistentes a un evento / queada.\n\n@SinSentidobot, que genera mensajes que parece que dicen algo pero la verdad que no.",
   "donate": "Hi! Thank you very much for considering to make a donation. My name is Ventura, I'm a student and I make free bots no my free time.\nThe money received from the donations is used to help maintain the servers, and if it is enough, to buy me a beer!\n\nYou can donate via [PayPal](paypal.me/vetu11), via Telegram using the buttons below or with Ethereum, sending it to this wallet:\n`0xa1B41eD75Da5d053793168D1B4F28610779E8a7c`",
   "about": "@{botusername} v{version}\n\nAllmost every bot of mine is open-source, you can find the source code on github.com/vetu11",
   "support_default": "To ask for help, send feedback, or report a bug, use /support <message> and I will send the message to the bot administrator. They will be able to reach out to you back.",
@@ -31,5 +31,6 @@
   "list_not_found_query_title": "Couldn't find any list with that ID",
   "list_not_found_query_description": "It may have been closed or have expired, create a new one.",
   "warning_list_does_not_exist": "⚠️ That list does not exist",
-  "press_to_send": "Press to send"
+  "press_to_send": "Press to send",
+  "vote_option_empty": "No one has said \"{vote_option}\" yet."
 }

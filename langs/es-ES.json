@@ -1,8 +1,8 @@
 {
-  "lang_ver": "v0.3.0",
+  "lang_ver": "v0.4.0",
   "not_found": "ERROR: texto no encontrado. Por favor usa /support <mensaje> describiendo cómo ha ocurrido.",
-  "start": "Hola! Bienvenido!",
-  "help": "Este es el mensaje de ayuda.",
+  "start": "Hola! Soy {bot_username}, te puedo ayudar a saber fácilmenente qué personas van a ir a un evento creando una encuesta. Para empezar, escribe @{bot_username} en cualquier chat, pon un título a la encuesta y envíala.",
+  "help": "Puedes crear una encuesta escribiendo @{bot_username} en cualquier chat, seguido de un título.\n\nPara ver las personas que no caben en la lista pulsa en los botones que tienen el número de personas etre paréntesis.",
   "more": "¡He hecho más bots!\n@Pilocobot es un juego picante para beber con tus amigos, o para conocer mejor a los nuevos en la fiesta\n\n@QuienVienebot para contar facilmente los asistentes a un evento / queada.\n\n@SinSentidobot, que genera mensajes que parece que dicen algo pero la verdad que no.",
   "donate": "Hola! Muchas gracias de antemano por considerar donar. Mi nombre es Ventura, soy estudiante y desarrollo bots gratuítos en mi tiempo libre.\nEl dinero de las donaciones va directamente al mantenimiento de los servidores.\n\nPuedes donar a través de [PayPal](paypal.me/vetu11), por Telegram usando los botones de abajo o con Ethereum enviándolo a la siguiente cartera\n`0xa1B41eD75Da5d053793168D1B4F28610779E8a7c`",
   "about": "@{botusername} v{version}\n\nCasi todos mis bots son open-source, puedes encontrar el código fuente en github.com/vetu11",
@@ -22,7 +22,7 @@
   "close_list": "✋ CERRAR",
   "forward_list": "Reenviar",
   "send_existent": "Pulsa para enviar esta cita ya creada",
-  "no_existent_meeting_query_title": "No tienes ning una cita creada",
+  "no_existent_meeting_query_title": "No tienes ninguna cita creada",
   "no_existent_meeting_query_description": "sigue escribiendo para crear una",
   "no_existent_meeting_message": "*No tienes ninguna cita creada*\nPara crear una cita escribe en cualquier chat _@{bot_username} ¿Quién viene a...?_",
   "donations_accepted": "Se aceptan donaciones ❤️",
@@ -31,5 +31,6 @@
   "list_not_found_query_title": "No existe ninguna cita con esa ID",
   "list_not_found_query_description": "puede que haya sido cerrada o haya caducado, crea una nueva.",
   "warning_list_does_not_exist": "⚠️ Parece que esa lista no existe",
-  "press_to_send": "Pulsa para enviar"
+  "press_to_send": "Pulsa para enviar",
+  "vote_option_empty": "Nadie ha dicho \"{vote_option}\" todavía."
 }

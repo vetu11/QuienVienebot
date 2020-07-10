@@ -15,16 +15,62 @@ from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Labe
     InputTextMessageContent
 
 
+# Generates the text por the complete list of votes of an option.
+def _create_complete_list_message(list, vote_option, lang):
+    conn = database.get_connection()
+    text = "*%s*\n%s\n" % (list.title, lang.get_text("vote_%s_message_line" % vote_option))
+
+    sql = "SELECT full_name FROM users WHERE id IN " \
+          "(SELECT user_id FROM user_votes WHERE list_id=? AND vote=? ORDER BY vote_timestamp)"
+    cur = conn.execute(sql, [list.id, vote_option])
+    names = cur.fetchall()
+
+    if not names:
+        text += "\n" + lang.get_text("vote_option_empty", vote_option=lang.get_text("vote_%s_keyboard" % vote_option))
+    else:
+        for name in names:
+            text += "\n%s" % name[0]
+
+    conn.close()
+    return text
+
+
+# Generates the keyboard for the complete list of votes of any option.
+def _create_complete_list_keyboard(list, lang):
+    conn = database.get_connection()
+    keyboard = [[],[]]
+    option_votes = []
+
+    for vote_option in list.vote_options:
+        cur = conn.execute("SELECT count(*) FROM user_votes WHERE list_id=? AND vote=?", [list.id, vote_option])
+        votes = cur.fetchone()
+
+        keyboard[0].append(InlineKeyboardButton(lang.get_text("vote_%s_keyboard" % vote_option),
+                                                callback_data="get_clist*%s*%s" % (vote_option, list.id)))
+
+        keyboard[1].append(InlineKeyboardButton("(%s)" % votes[0],
+                                                callback_data="get_clist*%s*%s" % (vote_option, list.id)))
+
+    conn.close()
+
+    return keyboard
+
+
+# Generates the text for the poll message.
 def _create_list_message(list, lang) -> str:
     conn = database.get_connection()
-
     text = "*%s*" % list.title
 
     for vote_option in list.vote_options:
-        sql = "SELECT full_name FROM users WHERE id IN " \
-              "(SELECT user_id FROM user_votes WHERE list_id=? AND vote=? ORDER BY vote_timestamp DESC LIMIT ?)"
+        sql = r"SELECT full_name FROM users WHERE id IN " \
+              r"(SELECT * FROM " \
+              r"(SELECT user_id FROM user_votes WHERE list_id=? AND vote=? ORDER BY vote_timestamp DESC) LIMIT ?)"
         cur = conn.execute(sql, [list.id, vote_option, const.NAMES_PER_VOTE_TYPE])
         names = cur.fetchall()
+
+        sql = "SELECT count(*) FROM user_votes WHERE list_id=? AND vote=?"
+        cur = conn.execute(sql, [list.id, vote_option])
+        n_votes = int(cur.fetchone()[0])
 
         if not names:
             continue
@@ -32,16 +78,20 @@ def _create_list_message(list, lang) -> str:
 
         for name in names:
             text += "\n" + name[0]
+
+        if n_votes > const.NAMES_PER_VOTE_TYPE:
+            text += "\n+%s" % n_votes - const.NAMES_PER_VOTE_TYPE
     conn.close()
 
     return text
 
 
+# Generates the keyboard for the poll message.
 def _create_list_keyboard(list, lang, uuid=None) -> list:
     conn = database.get_connection()
     keyboard = [[]]
     option_votes = []
-    
+
     # In some cases, we haven't created the list yet, so we need to use an id to a to be created list.
     if uuid:
         list_id = str(uuid)
@@ -80,12 +130,25 @@ def generic_message(bot, update, text_code, **kwargs):
     message.reply_text(lang.get_text(text_code, **kwargs), parse_mode=ParseMode.MARKDOWN)
 
 
-def start(bot, update):
-    generic_message(bot, update, "start")
+def start(bot, update, args):
+    if not args:
+        generic_message(bot, update, "start", bot_username=const.aux.BOT_USERNAME)
+    else:
+        # Send the complete list of votes for a particular option.
+        list_id, vote_option = args[0].split("_")
+        list = list_manager.get_list_by_id(list_id)
+        user = user_manager.get_user(update.effective_user)
+        lang = get_lang(user.language_code)
+        text = _create_complete_list_message(list, vote_option, lang)
+        keyboard = _create_complete_list_keyboard(list, lang)
+        update.effective_message.reply_text(text,
+                                            reply_markup=InlineKeyboardMarkup(keyboard),
+                                            parse_mode=ParseMode.MARKDOWN,
+                                            disable_web_page_preview=True)
 
 
 def help(bot, update):
-    generic_message(bot, update, "help")
+    generic_message(bot, update, "help", bot_username=const.aux.BOT_USERNAME)
 
 
 def more(bot, update):
@@ -252,7 +315,7 @@ def full_query(bot, update):
             message, keyboard = _create_list_message(list, lang), _create_list_keyboard(list, lang)
     
             results = [InlineQueryResultArticle(id=list.id,
-                                                title=list.id,
+                                                title=list.title,
                                                 description=lang.get_text("send_existent_meeting_query_description"),
                                                 reply_markup=InlineKeyboardMarkup(keyboard),
                                                 input_message_content=InputTextMessageContent(
@@ -303,6 +366,9 @@ def chosen_result(bot, update):
              title=update.chosen_inline_result.query)
 
 
+# INLINE BUTTONS
+
+
 def cast_vote(bot, update):
     user = user_manager.get_user(update.effective_user)
     lang = get_lang(user.language_code)
@@ -342,3 +408,23 @@ def cast_vote(bot, update):
         update.callback_query.answer(lang.get_text("warning_list_does_not_exist"), shot_alert=True)
         bot.edit_message_reply_markup(inline_message_id=update.callback_query.inline_message_id,
                                       reply_markup=InlineKeyboardMarkup([[]]))
+
+
+# Updates a message with the complete list of votes for a particular option.
+def get_clist(bot, update):
+    user = user_manager.get_user(update.effective_user)
+    lang = get_lang(user.language_code)
+    vote_option, list_id = update.callback_query.data.split("*")[1:3]
+    list = list_manager.get_list_by_id(list_id)
+    text = _create_complete_list_message(list, vote_option, lang)
+    keyboard = _create_complete_list_keyboard(list, lang)
+
+    try:
+        update.effective_message.edit_text(text,
+                                           reply_markup=InlineKeyboardMarkup(keyboard),
+                                           parse_mode=ParseMode.MARKDOWN,
+                                           disable_web_page_preview=True)
+    except Exception as e:
+        pass
+
+    update.callback_query.answer()
