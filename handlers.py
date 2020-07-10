@@ -80,7 +80,7 @@ def _create_list_message(list, lang) -> str:
             text += "\n" + name[0]
 
         if n_votes > const.NAMES_PER_VOTE_TYPE:
-            text += "\n+%s" % n_votes - const.NAMES_PER_VOTE_TYPE
+            text += "\n+%s" % (n_votes - const.NAMES_PER_VOTE_TYPE)
     conn.close()
 
     return text
